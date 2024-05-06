@@ -1,19 +1,52 @@
 import React from 'react';
 import EmployeeFilter from './EmployeeFilter.jsx';
 import EmployeeAdd from './EmployeeAdd.jsx';
+import { Modal, Button } from 'react-bootstrap';  // Ensure React Bootstrap is correctly imported
 
-function EmployeeRow({ employee, onDelete }) {
-    return (
-        <tr>
-            <td>{employee.name}</td>
-            <td>{employee.extension}</td>
-            <td>{employee.email}</td>
-            <td>{employee.title}</td>
-            <td>{employee.dateHired}</td>
-            <td>{employee.currentlyEmployed ? "Yes" : "No"}</td>
-            <td><button onClick={() => onDelete(employee._id)}>DELETE</button></td>
-        </tr>
-    );
+class EmployeeRow extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            modalVisible: false
+        };
+        this.toggleModal = this.toggleModal.bind(this);
+    }
+
+    toggleModal() {
+        this.setState(prevState => ({
+            modalVisible: !prevState.modalVisible
+        }));
+    }
+
+    render() {
+        const { employee, onDelete } = this.props;
+        return (
+            <tr>
+                <td>{employee.name}</td>
+                <td>{employee.extension}</td>
+                <td>{employee.email}</td>
+                <td>{employee.title}</td>
+                <td>{employee.dateHired}</td>
+                <td>{employee.currentlyEmployed ? "Yes" : "No"}</td>
+                <td>
+                    <Button variant="danger" onClick={this.toggleModal}>Delete</Button>
+                    <Modal show={this.state.modalVisible} onHide={this.toggleModal}>
+                        <Modal.Header closeButton>
+                            <Modal.Title>Delete Employee?</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>Are you sure you want to delete this employee?</Modal.Body>
+                        <Modal.Footer>
+                            <Button variant="secondary" onClick={this.toggleModal}>Cancel</Button>
+                            <Button variant="primary" onClick={() => {
+                                onDelete(employee._id);
+                                this.toggleModal();
+                            }}>Yes</Button>
+                        </Modal.Footer>
+                    </Modal>
+                </td>
+            </tr>
+        );
+    }
 }
 
 function EmployeeTable({ employees, onDelete }) {
@@ -32,12 +65,13 @@ function EmployeeTable({ employees, onDelete }) {
             </thead>
             <tbody>
                 {employees.map(employee => (
-                    <EmployeeRow key={employee.id} employee={employee} onDelete={onDelete} />
+                    <EmployeeRow key={employee._id} employee={employee} onDelete={onDelete} />
                 ))}
             </tbody>
         </table>
     );
 }
+
 class EmployeeList extends React.Component {
     state = {
         employees: [] // Initialize as an empty array, to be populated from the API
