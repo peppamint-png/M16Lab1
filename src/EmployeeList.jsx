@@ -1,52 +1,24 @@
 import React from 'react';
 import EmployeeFilter from './EmployeeFilter.jsx';
 import EmployeeAdd from './EmployeeAdd.jsx';
-import { Modal, Button } from 'react-bootstrap';  // Ensure React Bootstrap is correctly imported
 
-class EmployeeRow extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            modalVisible: false
-        };
-        this.toggleModal = this.toggleModal.bind(this);
-    }
+function EmployeeRow({ employee, onDelete }) {
+    return (
+        <tr>
+            <td>{employee.name}</td>
+            <td>{employee.title}</td>
+            <td>{employee.email}</td>
+            <td>{employee.extension}</td>
+            <td>{formatDate(employee.dateHired)}</td>
+            <td>{employee.currentlyEmployed ? "Yes" : "No"}</td>
+            <td><button onClick={() => onDelete(employee._id)}>DELETE</button></td>
+        </tr>
+    );
+}
 
-    toggleModal() {
-        this.setState(prevState => ({
-            modalVisible: !prevState.modalVisible
-        }));
-    }
-
-    render() {
-        const { employee, onDelete } = this.props;
-        return (
-            <tr>
-                <td>{employee.name}</td>
-                <td>{employee.extension}</td>
-                <td>{employee.email}</td>
-                <td>{employee.title}</td>
-                <td>{employee.dateHired}</td>
-                <td>{employee.currentlyEmployed ? "Yes" : "No"}</td>
-                <td>
-                    <Button variant="danger" onClick={this.toggleModal}>Delete</Button>
-                    <Modal show={this.state.modalVisible} onHide={this.toggleModal}>
-                        <Modal.Header closeButton>
-                            <Modal.Title>Delete Employee?</Modal.Title>
-                        </Modal.Header>
-                        <Modal.Body>Are you sure you want to delete this employee?</Modal.Body>
-                        <Modal.Footer>
-                            <Button variant="secondary" onClick={this.toggleModal}>Cancel</Button>
-                            <Button variant="primary" onClick={() => {
-                                onDelete(employee._id);
-                                this.toggleModal();
-                            }}>Yes</Button>
-                        </Modal.Footer>
-                    </Modal>
-                </td>
-            </tr>
-        );
-    }
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
 }
 
 function EmployeeTable({ employees, onDelete }) {
@@ -55,9 +27,9 @@ function EmployeeTable({ employees, onDelete }) {
             <thead>
                 <tr>
                     <th>Name</th>
-                    <th>Extension</th>
-                    <th>Email</th>
                     <th>Title</th>
+                    <th>Email</th>
+                    <th>Extension</th>
                     <th>Date Hired</th>
                     <th>Currently Employed?</th>
                     <th>Action</th>

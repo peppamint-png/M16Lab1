@@ -7,7 +7,7 @@ class EmployeeAdd extends Component {
         email: '',
         extension: '',
         dateHired: '',
-        currentlyEmployed: false // Assuming this is a boolean
+        currentlyEmployed: true
     };
 
     handleInputChange = (event) => {
@@ -32,7 +32,7 @@ class EmployeeAdd extends Component {
             email: '', 
             extension: '', 
             dateHired: '',
-            currentlyEmployed: false
+            currentlyEmployed: true
         }); // Reset form fields
     };
 
